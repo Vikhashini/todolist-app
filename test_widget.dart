@@ -1,25 +1,412 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:app2/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+ testWidgets('Empty Task', (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(home: ToDo()));
+    final taskField = find.byType(TextField);
+    final taskList = find.byType(ListView);
+    expect(taskField, findsOneWidget);
+    expect(taskList, findsOneWidget);
+    expect(find.text('Enter task'), findsOneWidget);
+ });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+ testWidgets('Add Task', (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(home: ToDo()));
+    final taskField = find.byType(TextField);
+    await tester.enterText(taskField, 'Task 1');
     await tester.pump();
+    final addButton = find.byType(IconButton);
+    await tester.tap(addButton);
+    await tester.pump();
+    final taskList = find.byType(ListView);
+    expect(find.text('Task 1'), findsOneWidget);
+ });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+ testWidgets('Remove Task', (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(home: ToDo()));
+    final taskField = find.byType(TextField);
+    await tester.enterText(taskField, 'Task 1');
+    await tester.pump();
+    final addButton = find.byType(IconButton);
+    await tester.tap(addButton);
+    await tester.pump();
+    final taskList = find.byType(ListView);
+    final taskItem = find.text('Task 1');
+    expect(taskItem, findsOneWidget);
+    await tester.drag(taskItem, Offset(-100, 0));
+    await tester.pump(Duration(seconds: 1));
+    expect(taskItem, findsNothing);
+ });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
