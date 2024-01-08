@@ -1,111 +1,87 @@
 import 'package:flutter/material.dart';
 
 void main() {
- runApp(const MyApp());
+ runApp(MaterialApp(
+    home: ToDo(),
+ ));
 }
 
-class MyApp extends StatelessWidget {
- const MyApp({Key? key}) : super(key: key);
-
+class ToDo extends StatefulWidget {
  @override
- Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Tic Tac Toe',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Tic Tac Toe'),
-    );
+ _ToDoState createState() => _ToDoState();
+}
+
+class _ToDoState extends State<ToDo> {
+ List<String> tasks = [];
+ TextEditingController taskController = TextEditingController();
+
+ void addTask() {
+    if (taskController.text.isNotEmpty) {
+      setState(() {
+        tasks.add(taskController.text);
+      });
+      taskController.clear();
+    }
  }
-}
 
-class MyHomePage extends StatefulWidget {
- const MyHomePage({Key? key, required this.title}) : super(key: key);
-
- final String title;
-
- @override
- State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
- List<String> board = List.generate(9, (index) => '');
- String currentPlayer = 'X';
- bool isGameOver = false;
-
- void onTileTapped(int index) {
-    if (isGameOver || board[index] != '') return;
+ void removeTask(int index) {
     setState(() {
-      board[index] = currentPlayer;
-      currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
-      isGameOver = checkGameOver();
+      tasks.removeAt(index);
     });
- }
-
- bool checkGameOver() {
-    for (int i = 0; i < 3; i++) {
-      if (board[i] != '' &&
-          board[i] == board[i + 3] &&
-          board[i] == board[i + 6]) {
-        return true;
-      }
-      if (board[i * 3] != '' &&
-          board[i * 3] == board[i * 3 + 1] &&
-          board[i * 3] == board[i * 3 + 2]) {
-        return true;
-      }
-    }
-    if (board[0] != '' && board[0] == board[4] && board[0] == board[8]) {
-      return true;
-    }
-    if (board[2] != '' && board[2] == board[4] && board[2] == board[6]) {
-      return true;
-    }
-    return false;
  }
 
  @override
  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('To Do List'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < 3; i++)
-              Expanded(
-                child: Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 children: [
-                    for (int j = 0; j < 3; j++)
-                      GestureDetector(
-                        onTap: () => onTileTapped(i * 3 + j),
-                        child: Container(
-                          margin: const EdgeInsets.all(5),
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              board[i * 3 + j],
-                              style: const TextStyle(
-                                fontSize: 50,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                 ],
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                 child: TextField(
+                    controller: taskController,
+                    decoration: InputDecoration(hintText: 'Enter task'),
+                 ),
                 ),
-              ),
-          ],
-        ),
+                IconButton(
+                 icon: Icon(Icons.add),
+                 onPressed: addTask,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: tasks.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                 key: Key(tasks[index]),
+                 background: Container(
+                    color: Colors.red,
+                    child: Icon(Icons.delete, color: Colors.white),
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.only(right: 20.0),
+                 ),
+                 direction: DismissDirection.endToStart,
+                 onDismissed: (direction) {
+                    removeTask(index);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Task removed')),
+                    );
+                 },
+                 child: ListTile(
+                    title: Text(tasks[index]),
+                 ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
  }
